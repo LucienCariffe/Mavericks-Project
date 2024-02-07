@@ -1,19 +1,24 @@
 import React from 'react';
-import { Modal, Box, Button } from '@mui/material';
+import { Modal, Box } from '@mui/material';
 import gameData from './gameData.json'
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
+import RanksTable from './teamRanks';
+import Tab from '@mui/material/Tab';
+import TabContext from '@mui/lab/TabContext';
+import TabList from '@mui/lab/TabList';
+import TabPanel from '@mui/lab/TabPanel';
+
+
+
 
 
 export default function TeamModal({ isOpen, handleClose, selectedTeam }) {
     const selectedTeamData = gameData.teamRanks.find((team) => team.team === selectedTeam);
-    
-    
+  
+    const [value, setValue] = React.useState('1');
+
+    const handleChange = (event, newValue) => {
+        setValue(newValue);
+      };
     return (
       <Modal open={isOpen} onClose={handleClose}>
         <Box
@@ -30,79 +35,24 @@ export default function TeamModal({ isOpen, handleClose, selectedTeam }) {
           }}
         >
           <Box>
-            <TableContainer>
-              <Table sx={{ minWidth: 0 }} size="small" aria-label="team stats table">
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Stats</TableCell>
-                    <TableCell>Rank</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  
-                    <TableRow >
-                      <TableCell component="th" scope="row">
-                        {selectedTeamData['OFF RTG']}
-                      </TableCell>
-                      <TableCell>{selectedTeamData['OFF RTG_rank']}</TableCell>
-                    </TableRow>
-                    <TableRow >
-                      <TableCell component="th" scope="row">
-                        {selectedTeamData['EFG%']}
-                      </TableCell>
-                      <TableCell>{selectedTeamData['EFG%_rank']}</TableCell>
-                    </TableRow>
-                    <TableRow >
-                    <TableCell component="th" scope="row">
-                        {selectedTeamData['TURNOVERS']}
-                      </TableCell>
-                      <TableCell>{selectedTeamData['TURNOVERS_rank']}</TableCell>
-                    </TableRow>
-                    <TableRow >
-                    <TableCell component="th" scope="row">
-                        {selectedTeamData['OFF REB%']}
-                      </TableCell>
-                      <TableCell>{selectedTeamData['OFF REB%_rank']}</TableCell>
-                    </TableRow>
-                    <TableRow >
-                    <TableCell component="th" scope="row">
-                        {selectedTeamData['FTA']}
-                      </TableCell>
-                      <TableCell>{selectedTeamData['FTA_rank']}</TableCell>
-                    </TableRow>
-                    <TableRow >
-                    <TableCell component="th" scope="row">
-                        {selectedTeamData['DEF RTG']}
-                      </TableCell>
-                      <TableCell>{selectedTeamData['DEF RTG_rank']}</TableCell>
-                    </TableRow>
-                    <TableRow >
-                    <TableCell component="th" scope="row">
-                        {selectedTeamData['OPP. EFG%']}
-                      </TableCell>
-                      <TableCell>{selectedTeamData['OPP. EFG_rank']}</TableCell>
-                    </TableRow>
-                    <TableRow >
-                    <TableCell component="th" scope="row">
-                        {selectedTeamData['TURNOVERS FORCED']}
-                      </TableCell>
-                      <TableCell>{selectedTeamData['TURNOVERS FORCED_rank']}</TableCell>
-                    </TableRow>
-                    <TableRow >
-                    <TableCell component="th" scope="row">
-                        {selectedTeamData['DEF REB%']}
-                      </TableCell>
-                      <TableCell>{selectedTeamData['DEF REB_rank']}</TableCell>
-                    </TableRow>
-                    <TableRow >
-                    <TableCell component="th" scope="row">
-                        {selectedTeamData['FTA ALLOWED']}
-                      </TableCell>
-                      <TableCell>{selectedTeamData['FTA ALLOWED_rank']}</TableCell>
-                    </TableRow>
-                </TableBody>
-              </Table>
-            </TableContainer>
+          <Box sx={{ width: '100%', typography: 'body1' }}>
+      <TabContext value={value}>
+        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+          <TabList onChange={handleChange} aria-label="lab API tabs example">
+            <Tab label={"Team Ranks"} value="1" />
+            <Tab label={"Player Stats"} value="2" />
+            
+          </TabList>
+        </Box>
+        <TabPanel value="1">
+            <RanksTable
+            selectedTeamData={selectedTeamData}
+            />
+            </TabPanel>
+        <TabPanel value="2">Standings</TabPanel>
+      </TabContext>
+    </Box>
+            
           </Box>
         </Box>
       </Modal>

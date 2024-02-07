@@ -69,9 +69,9 @@ export default function DenseTable() {
         </TableBody>
       </Table>
     </TableContainer>
-    {selectedTeam && (
+    
         <TeamModal isOpen={open} handleClose={handleClose} selectedTeam={selectedTeam} />
-      )}
+      
     </>
   );
 };
