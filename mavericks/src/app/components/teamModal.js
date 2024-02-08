@@ -6,6 +6,7 @@ import Tab from '@mui/material/Tab';
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
+import PlayerStatsTable from './playerStats';
 
 
 
@@ -13,6 +14,8 @@ import TabPanel from '@mui/lab/TabPanel';
 
 export default function TeamModal({ isOpen, handleClose, selectedTeam }) {
     const selectedTeamData = gameData.teamRanks.find((team) => team.team === selectedTeam);
+    const selectedTeamPlayer = gameData.playerStats.filter((player) => player.team === selectedTeam);
+    console.log(selectedTeamPlayer)
   
     const [value, setValue] = React.useState('1');
 
@@ -27,10 +30,11 @@ export default function TeamModal({ isOpen, handleClose, selectedTeam }) {
             top: '50%',
             left: '50%',
             transform: 'translate(-50%, -50%)',
-            width: 400,
+            width: '90%',
+            height: '90%', 
+            overflow: 'auto',
             bgcolor: 'background.paper',
             boxShadow: 24,
-            height: 400,
             p: 4,
           }}
         >
@@ -49,7 +53,13 @@ export default function TeamModal({ isOpen, handleClose, selectedTeam }) {
             selectedTeamData={selectedTeamData}
             />
             </TabPanel>
-        <TabPanel value="2">Standings</TabPanel>
+        <TabPanel value="2">
+          
+          <PlayerStatsTable
+          selectedTeamPlayer={selectedTeamPlayer}
+          />
+          
+        </TabPanel>
       </TabContext>
     </Box>
             
