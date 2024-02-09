@@ -13,10 +13,15 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import gameData from './gameData.json';
 import  Link  from '@mui/material/Link';
 import TeamModal from './teamModal';
-import { Box, Button } from '@mui/material';
+import { Button } from '@mui/material';
+import PlaybyPlay from './playByPlay';
+import ViewScouting from './viewScouting';
+import Typography from '@mui/material/Typography';
+import AddScouting from './addScouting';
 
 
-const renderQuarterPoints = (quarterPoints) => {
+
+const renderQuarterPoints = (quarterPoints, handleOpenPlay, gameID) => {
   let previousPeriod = null;
   return quarterPoints.map((quarterPoint, index) => {
       
@@ -32,7 +37,7 @@ const renderQuarterPoints = (quarterPoints) => {
                        <div style={{ display: 'flex', alignItems: 'left', justifyContent: 'space-evenly' }}>
         <div>{quarterPoint.period}</div>
                        <div >
-            <Button color="primary" sx={{ fontSize: '0.65rem', padding: '2px 2px' }}>
+            <Button color="primary" sx={{ fontSize: '0.65rem', padding: '2px 2px' }} onClick={() => handleOpenPlay(quarterPoint.period, gameID)}>
                 Play by Play
             </Button>
         </div>
@@ -47,14 +52,36 @@ const renderQuarterPoints = (quarterPoints) => {
 };
 
 export default function DenseTable() {
-  const games = gameData.games;
-  const mavsData = games.filter((game) => game.homeTeam === 'DAL' || game.awayTeam === 'DAL');
-  const otherTeamsData = games.filter((game) => game.homeTeam !== 'DAL' && game.awayTeam !== 'DAL');
-
+  
   const [open, setOpen] = React.useState(false);
   const [selectedTeam, setSelectedTeam] = React.useState(null);
+  const [openPlay, setOpenPlay] = React.useState(false);
+  const [selectedPeriod, setSelectedPeriod] = React.useState(null);
+  const [selectedID, setSelectedID] = React.useState(null);
+  const [openScout, setOpenScout] = React.useState(false);
+  const[openAdd, setOpenAdd] = React.useState(false)
   
+  
+  const handleOpenPlay = (period, gameID) => {
+    setSelectedPeriod(period);
+    setOpenPlay(true);
+    setSelectedID(gameID)
+    
+  }
+  const handleClosePlay = () => setOpenPlay(false);
 
+  const handleOpenScout = (gameID) => {
+    setOpenScout(true)
+    setSelectedID(gameID)
+  }
+  const handleCloseScout = () => setOpenScout(false);
+
+  const handleOpenAdd = (gameID) => {
+    setOpenAdd(true)
+    setSelectedID(gameID)
+  }
+  const handleCloseAdd = () => setOpenAdd(false)
+  
 
   const handleOpen = (team) => {
     setSelectedTeam(team);
@@ -110,8 +137,8 @@ export default function DenseTable() {
                 <TableCell align="center">{game.seasonType}</TableCell>
                 <TableCell align="center">{game.location}/{game.arena}</TableCell>
                 <TableCell align="center">
-                  <Button> View </Button>
-                  <Button> + </Button>
+                  <Button onClick={() => handleOpenScout(game.nbaGameId)}> View </Button>
+                  <Button onClick={() => handleOpenAdd(game.nbaGameId)}> + </Button>
                 </TableCell>
                 <TableCell>
                   <IconButton
@@ -125,6 +152,11 @@ export default function DenseTable() {
               <TableRow>
                 <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={7}>
                   <Collapse in={openRowId === index} timeout="auto" unmountOnExit>
+                  {gameData.quarterPoints.filter(quarterPoint => quarterPoint.nbaGameId === game.nbaGameId).length === 0 ? (
+                  <Typography variant="body1">
+           Game has not started
+          </Typography>
+        ) : (
                     <Table size="small" aria-label="quarter points">
                       <TableHead>
                         <TableRow>
@@ -134,10 +166,12 @@ export default function DenseTable() {
                         </TableRow>
                       </TableHead>
                       <TableBody>
-                      {renderQuarterPoints(gameData.quarterPoints.filter(quarterPoint => quarterPoint.nbaGameId === game.nbaGameId))}
-
+                  
+                      {renderQuarterPoints(gameData.quarterPoints.filter(quarterPoint => quarterPoint.nbaGameId === game.nbaGameId), handleOpenPlay, game.nbaGameId )}
+        
                       </TableBody>
                     </Table>
+        )}
                   </Collapse>
                 </TableCell>
               </TableRow>
@@ -147,6 +181,9 @@ export default function DenseTable() {
       </Table>
     </TableContainer>
     <TeamModal isOpen={open} handleClose={handleClose} selectedTeam={selectedTeam} />
+    <PlaybyPlay isOpen={openPlay} handleClosePlay={handleClosePlay} selectedPeriod={selectedPeriod} selectedID={selectedID}/>
+    <ViewScouting isOpen={openScout} handleCloseScout={handleCloseScout} selectedID={selectedID}/>
+    <AddScouting isOpen={openAdd} handleCloseAdd={handleCloseAdd} selectedID={selectedID}/>
     </>
   );
 }
